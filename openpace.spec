@@ -4,7 +4,7 @@
 #
 Name     : openpace
 Version  : 1cc39101b14537a0da515eb1843b6fef74ccc8b5
-Release  : 1
+Release  : 2
 URL      : https://github.com/frankmorgner/openpace/archive/1cc39101b14537a0da515eb1843b6fef74ccc8b5/openpace-1cc39101b14537a0da515eb1843b6fef74ccc8b5.tar.gz
 Source0  : https://github.com/frankmorgner/openpace/archive/1cc39101b14537a0da515eb1843b6fef74ccc8b5/openpace-1cc39101b14537a0da515eb1843b6fef74ccc8b5.tar.gz
 Summary  : @PACKAGE_SUMMARY@
@@ -14,11 +14,13 @@ Requires: openpace-bin = %{version}-%{release}
 Requires: openpace-lib = %{version}-%{release}
 Requires: openpace-license = %{version}-%{release}
 Requires: openpace-man = %{version}-%{release}
-BuildRequires : buildreq-golang
 BuildRequires : gengetopt-bin
 BuildRequires : help2man
 BuildRequires : pkgconfig(libcrypto)
 BuildRequires : sed
+# Suppress stripping binaries
+%define __strip /bin/true
+%define debug_package %{nil}
 
 %description
 # OpenPACE *- Cryptographic library for EAC version 2*
@@ -89,15 +91,15 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1671064536
+export SOURCE_DATE_EPOCH=1677181605
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto "
-export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
-export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto "
+export CFLAGS="$CFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export FCFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export FFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export CXXFLAGS="$CXXFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
 %reconfigure --disable-static
 make
 
@@ -109,10 +111,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make check
 
 %install
-export SOURCE_DATE_EPOCH=1671064536
+export SOURCE_DATE_EPOCH=1677181605
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/openpace
-cp %{_builddir}/openpace-%{version}/COPYING %{buildroot}/usr/share/package-licenses/openpace/8f5ba548fe758a98a88857c90611089a657b786d
+cp %{_builddir}/openpace-%{version}/COPYING %{buildroot}/usr/share/package-licenses/openpace/8f5ba548fe758a98a88857c90611089a657b786d || :
 %make_install
 ## install_append content
 find %{buildroot} -type f -name .nojekyll -exec rm {} +
